@@ -86,7 +86,7 @@ function Hero() {
             <div className="rate-v"><CountUp to={2} prefix="$" duration={1.6} /></div>
             <div className="rate-l">per 1,000 listens</div>
             <div className="rate-foot">
-              <span className="stripe">Paid by <b>Stripe</b></span>
+              <span className="stripe">Paid from our <b>creator fund</b></span>
               <Waveform bars={16} height={28} color="#EA1C25" />
             </div>
           </motion.div>
@@ -262,14 +262,14 @@ function ScreenLicense() {
 function ScreenPaid() {
   return (
     <motion.div key="s2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.45, ease: EASE }}>
-      <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em' }}>Get paid by Stripe</div>
+      <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em' }}>Get paid from our creator fund</div>
       <div className="payout">
         <div className="payout-row"><span className="muted">You get</span><b style={{ color: '#EA1C25', fontSize: 22 }}>$2 per 1,000 listens</b></div>
         <div className="payout-row"><span className="muted">Licensed clips</span><b>12</b></div>
-        <div className="payout-row"><span className="muted">Paid</span><b>Every month, by Stripe</b></div>
+        <div className="payout-row"><span className="muted">Paid</span><b>Every month, from our creator fund</b></div>
         <div className="payout-row"><span className="muted">Next payout</span><b>15 Dec</b></div>
       </div>
-      <motion.div className="btn btn-red" style={{ marginTop: 18, width: '100%' }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>Connect Stripe</motion.div>
+      <motion.div className="btn btn-red" style={{ marginTop: 18, width: '100%' }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>Add payout details</motion.div>
     </motion.div>
   )
 }
@@ -288,7 +288,7 @@ export function HowItWorks() {
   const steps = [
     ['1', '#FEDD01', 'Find your content', 'Search your name or channel.'],
     ['2', '#09D1C7', 'License it', "Choose what we can use. Remove anything you don't want."],
-    ['3', '#EA1C25', 'Get paid by Stripe', 'Straight to your bank, every month.'],
+    ['3', '#EA1C25', 'Get paid from our creator fund', 'Straight to your bank, every month.'],
   ]
   return (
     <section className="how" id="how" ref={ref}>
@@ -296,7 +296,7 @@ export function HowItWorks() {
         <div className="wrap how-grid">
           <div>
             <span className="eyebrow">How it works</span>
-            <h2 className="h2" style={{ marginTop: 14, fontSize: 'clamp(32px, 3.4vw, 46px)' }}>Find your content, license it and get paid by Stripe.</h2>
+            <h2 className="h2" style={{ marginTop: 14, fontSize: 'clamp(32px, 3.4vw, 46px)' }}>Find your content, license it and get paid from our creator fund.</h2>
             <div className="steps">
               {steps.map(([n, c, t, d], k) => (
                 <motion.div key={n} className="step" animate={{ opacity: step === k ? 1 : 0.38 }} transition={{ duration: 0.4 }}>
@@ -333,7 +333,7 @@ const TAGS = [
   { t: 'Linked to your original', c: '#09D1C7', to: [380, -230], from: [900, -560], r: 6 },
   { t: 'We clip it', c: '#EFE2D5', to: [-500, 40], from: [-1100, 80], r: 4 },
   { t: 'We promote it', c: '#EA1C25', to: [470, 60], from: [1100, 120], r: -5 },
-  { t: 'Paid by Stripe', c: '#fff', to: [-300, 240], from: [-700, 700], r: 7 },
+  { t: 'Paid from our creator fund', c: '#fff', to: [-300, 240], from: [-700, 700], r: 7 },
   { t: 'Remove any time', c: '#FEDD01', to: [320, 250], from: [800, 700], r: -6 },
 ]
 function FTag({ tag, p }: { tag: (typeof TAGS)[number]; p: MotionValue<number> }) {
@@ -494,7 +494,6 @@ export default function Landing() {
       <Statement />
       <HowItWorks />
       <FloatingTags />
-      <Founding />
       <Faq />
       <Final />
       <Footer />

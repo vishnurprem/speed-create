@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'motion/react'
 import { useApp } from './App'
 import { BASE, EASE, Magnetic } from './ui'
-import { Faq, Final, Footer, Founding, HowItWorks, Statement } from './Landing'
+import { Faq, Final, Footer, HowItWorks, Statement } from './Landing'
 import { APP_CLIPS, FeedCard, StationProfile, useClipPlayer, type AppClip } from './AppFeed'
 
 function useIsMobile(q = '(max-width: 900px)') {
@@ -46,7 +46,7 @@ function Pitch({ compact }: { compact?: boolean }) {
         People scroll short clips from voices they love. License your clips to us and get paid for every listen.
       </motion.p>
       <ul>
-        {['$2 for every 1,000 listens', 'Paid monthly via Stripe', 'Non-exclusive. Remove anything, any time.'].map((t, k) => (
+        {['$2 for every 1,000 listens', 'Paid monthly from our creator fund', 'Non-exclusive. Remove anything, any time.'].map((t, k) => (
           <motion.li key={t} initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.55, ease: EASE, delay: 0.95 + k * 0.12 }}><Tick delay={1.05 + k * 0.12} />{t}</motion.li>
         ))}
       </ul>
@@ -73,7 +73,7 @@ function YouCard({ showCta = true }: { showCta?: boolean }) {
           <span style={{ color: '#666', fontSize: 15 }}>linked to your show,</span>
           <b>and paying you.</b>
         </div>
-        <div className="you-rate"><strong>$2</strong><span>for every 1,000 listens<br />Paid monthly via Stripe</span></div>
+        <div className="you-rate"><strong>$2</strong><span>for every 1,000 listens<br />Paid monthly from our creator fund</span></div>
         {showCta && <motion.button className="btn btn-red" style={{ width: '100%', height: 52 }} whileTap={{ scale: 0.97 }} onClick={() => go('find')}>License my content →</motion.button>}
       </div>
     </div>
@@ -113,7 +113,6 @@ function Deck() {
   const jump = (sel: string) => { setMenu(false); setTimeout(() => scrollTo(sel), 250) }
   const links: [string, () => void][] = [
     ['How it works', () => jump('#how')],
-    ['Founding Creators', () => jump('.founding')],
     ['Questions', () => jump('#faq')],
     ['Find your content', () => { setMenu(false); go('find') }],
     ['Talk to us', () => { setMenu(false); window.location.href = 'mailto:company@speedradio.com' }],
@@ -198,7 +197,7 @@ function Deck() {
             </nav>
             <motion.div className="b-menu-foot" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
               <button className="btn btn-red" onClick={() => { setMenu(false); go('find') }}>License my content</button>
-              <span>$2 for every 1,000 listens · Paid via Stripe</span>
+              <span>$2 for every 1,000 listens · Paid from our creator fund</span>
             </motion.div>
           </motion.div>
         )}
@@ -219,7 +218,6 @@ export default function OptionB() {
       <Deck />
       <Statement />
       <HowItWorks />
-      <Founding />
       <Faq />
       <Final />
       <Footer />

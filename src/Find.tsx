@@ -83,7 +83,7 @@ export default function Find() {
   }
   const setStatus = (id: string, s: ClipStatus) => {
     setClips((cs) => cs.map((c) => (c.id === id ? { ...c, status: s } : c)))
-    if (s === 'licensed') notify('Licensed. You\'ll be paid by Stripe.', '#3BE08D')
+    if (s === 'licensed') notify('Licensed. You\'ll be paid from our creator fund.', '#3BE08D')
     else if (s === 'removing') notify('Removing within 24 hours.', '#EA1C25')
     else notify('Back to unclaimed.', '#8A8A8A')
   }
@@ -162,7 +162,7 @@ export default function Find() {
             <span><b>{counts.unclaimed}</b> unclaimed</span>
           </div>
           <div className="foot-actions">
-            <span className="muted foot-note">Paid by Stripe, every month. Remove any clip, any time.</span>
+            <span className="muted foot-note">Paid monthly from our creator fund. Remove any clip, any time.</span>
             <button className="btn btn-ghost btn-sm" onClick={() => setSheet(true)}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5" /><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" /></svg>
               {files.length ? `Documents · ${files.length}` : 'Upload documents'}
@@ -226,7 +226,7 @@ export default function Find() {
                 <div><b>{counts.removing}</b><span>coming down within 24 hours</span></div>
                 <div><b>{files.length}</b><span>document{files.length === 1 ? '' : 's'} uploaded</span></div>
               </div>
-              <button className="btn btn-white" style={{ width: '100%' }} onClick={() => setDone(false)}>Connect Stripe for payouts</button>
+              <button className="btn btn-white" style={{ width: '100%' }} onClick={() => setDone(false)}>Add payout details</button>
               <button className="undo" style={{ alignSelf: 'center' }} onClick={() => setDone(false)}>Back to my clips</button>
             </motion.div>
           </motion.div>
