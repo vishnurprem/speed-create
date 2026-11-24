@@ -2,13 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // Multi-page: index.html = option picker, a.html = Option A, b.html = Option B
-// On build the site is served from GitHub Pages at /speed-create/.
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/speed-create/' : '/',
+// Default base '/' (Vercel serves from the domain root).
+// `npm run deploy` builds with --base=/speed-create/ for GitHub Pages.
+export default defineConfig({
+  base: '/',
   plugins: [react()],
   build: {
     rollupOptions: {
       input: { index: 'index.html', a: 'a.html', b: 'b.html' },
     },
   },
-}))
+})

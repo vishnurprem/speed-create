@@ -5,7 +5,8 @@ import { writeFileSync, rmSync } from 'node:fs'
 const run = (cmd, cwd) => execSync(cmd, { stdio: 'inherit', cwd })
 const remote = execSync('git remote get-url origin').toString().trim()
 
-run('npm run build')
+run('npx tsc -b')
+run('npx vite build --base=/speed-create/')
 writeFileSync('dist/.nojekyll', '')
 rmSync('dist/.git', { recursive: true, force: true })
 run('git init -b gh-pages', 'dist')

@@ -1,6 +1,6 @@
 # SpeedRadio · Creator licensing site (prototype)
 
-Live: https://vishnurprem.github.io/speed-create/
+Live: deployed on Vercel from `main` (also mirrored at https://vishnurprem.github.io/speed-create/)
 
 - `index.html` · choose a design option
 - `a.html` · Option A, editorial scroll site
@@ -18,10 +18,7 @@ npm run dev
 
 ## Deploy
 
-```
-npm run deploy
-```
-
-Builds with base `/speed-create/` and pushes `dist/` to the `gh-pages` branch, which GitHub Pages serves.
+- **Vercel:** every push to `main` builds with `npm run build` (output `dist/`, base `/`).
+- **GitHub Pages mirror:** `npm run deploy` builds with base `/speed-create/` and pushes `dist/` to the `gh-pages` branch.
 
 Prototype for internal review. Clip audio and captions are staging samples.
