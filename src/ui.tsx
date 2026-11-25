@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { animate, AnimatePresence, motion, useInView, useMotionValue, useMotionValueEvent, useScroll, useSpring } from 'motion/react'
+import { animate, AnimatePresence, motion, useInView, useMotionValue, useMotionValueEvent,  useSpring } from 'motion/react'
 import { useApp } from './App'
 
 export const BASE = import.meta.env.BASE_URL
@@ -84,9 +84,9 @@ export function useMenuItems(): [string, () => void][] {
   return [
     ['How it works', () => scrollTo('#how')],
     ['FAQ', () => scrollTo('#faq')],
+    ['Talk to us', () => go('contact')],
     ['Track request', () => go('track')],
     ['Find your content', () => go('find')],
-    ['Talk to us', () => go('contact')],
   ]
 }
 
@@ -122,18 +122,15 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 export function Nav() {
   const { go, route } = useApp()
   const items = useMenuItems()
-  const { scrollY } = useScroll()
-  const [compact, setCompact] = useState(false)
   const [menu, setMenu] = useState(false)
-  useMotionValueEvent(scrollY, 'change', (v) => setCompact(v > 40))
   return (<>
     <div className="nav-shell">
       <motion.nav
         className="nav"
         initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1, paddingLeft: compact ? 14 : 18 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-        style={{ width: compact ? 'min(760px, calc(100vw - 24px))' : 'min(1120px, calc(100vw - 24px))', transition: 'width .5s cubic-bezier(.22,1,.36,1)' }}
+        style={{ width: 'min(1120px, calc(100vw - 24px))' }}
       >
         <button onClick={() => go('home')} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Logo />
