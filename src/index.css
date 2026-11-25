@@ -614,7 +614,8 @@ h1, h2, h3, p { margin: 0; }
 .ct-row { display: flex; gap: 16px; align-items: center; margin-top: 10px; }
 
 /* upload sheet: talk to someone */
-.tts { margin: 4px 0 14px; border-radius: 16px; border: 1px solid #262626; background: #0e0e0e; overflow: hidden; }
+.up-sheet > * { flex-shrink: 0; }
+.tts { margin: 4px 0 14px; border-radius: 16px; border: 1px solid #262626; background: #0e0e0e; overflow: hidden; scroll-margin: 16px; }
 .tts-head, .tts-done { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px; text-align: left; }
 .tts-head:hover { background: #141414; }
 .tts-ic { width: 36px; height: 36px; border-radius: 50%; background: rgba(234,28,37,.14); color: #ff6b70; display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; }

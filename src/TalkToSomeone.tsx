@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { sendMessage, type Account } from './requests'
 import { EASE } from './ui'
@@ -12,6 +12,21 @@ export default function TalkToSomeone({ account, role, clipCount }: { account: A
   const [prefer, setPrefer] = useState<'call' | 'email'>('call')
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
+  const box = useRef<HTMLDivElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  // When the form opens, scroll the sheet (not the page) so the whole form is visible, then focus the phone field.
+  useEffect(() => {
+    if (!open || sent) return
+    const t = window.setTimeout(() => {
+      const el = box.current, sheet = el?.closest('.up-sheet') as HTMLElement | null
+      if (el && sheet) {
+        const over = el.getBoundingClientRect().bottom - sheet.getBoundingClientRect().bottom + 24
+        if (over > 0) sheet.scrollTo({ top: sheet.scrollTop + over, behavior: 'smooth' })
+      }
+      phoneRef.current?.focus({ preventScroll: true })
+    }, 320)
+    return () => window.clearTimeout(t)
+  }, [open, sent])
   const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const okPhone = phone.replace(/\D/g, '').length >= 7
   const valid = name.trim() && (prefer === 'call' ? okPhone : okEmail)
@@ -27,7 +42,7 @@ export default function TalkToSomeone({ account, role, clipCount }: { account: A
   }
 
   return (
-    <div className={`tts${open ? ' open' : ''}`}>
+    <div ref={box} className={`tts${open ? ' open' : ''}`}>
       {!open ? (
         <button className="tts-head" onClick={() => setOpen(true)}>
           <span className="tts-ic" aria-hidden="true">
@@ -45,9 +60,9 @@ export default function TalkToSomeone({ account, role, clipCount }: { account: A
                 <button role="radio" aria-checked={prefer === 'call'} className={prefer === 'call' ? 'on' : ''} onClick={() => setPrefer('call')}>Call me</button>
                 <button role="radio" aria-checked={prefer === 'email'} className={prefer === 'email' ? 'on' : ''} onClick={() => setPrefer('email')}>Email me</button>
               </div>
-              <label><span>Name</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" /></label>
-              <label><span>Phone{prefer === 'email' ? ' (optional)' : ''}</span><input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="+1 555 010 2030" /></label>
+              <label><span>Phone{prefer === 'email' ? ' (optional)' : ''}</span><input ref={phoneRef} value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="+1 555 010 2030" /></label>
               <label><span>Email{prefer === 'call' ? ' (optional)' : ''}</span><input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="email" /></label>
+              <label><span>Name</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" /></label>
               <button className="btn btn-white" disabled={!valid || sending} style={{ width: '100%', opacity: valid ? 1 : 0.45 }} onClick={submit}>
                 {sending ? 'Sending…' : prefer === 'call' ? 'Request a call back' : 'Email me'}
               </button>

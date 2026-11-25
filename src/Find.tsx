@@ -195,7 +195,7 @@ export default function Find() {
 
       <AnimatePresence>
         {sheet && (
-          <motion.div className="sheet-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSheet(false)}>
+          <motion.div key="upload" className="sheet-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSheet(false)}>
             <motion.div className="up-sheet" data-lenis-prevent initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 32 }} onClick={(e) => e.stopPropagation()}>
               <div className="grab" />
               <h3>Upload documents</h3>
@@ -233,7 +233,7 @@ export default function Find() {
           </motion.div>
         )}
         {signIn && (
-          <motion.div className="sheet-scrim center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div key="signin" className="sheet-scrim center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div initial={{ scale: 0.94, y: 24, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 24 }}>
               <GoogleSignIn
                 title="Sign in to submit"
@@ -245,7 +245,7 @@ export default function Find() {
           </motion.div>
         )}
         {done && (
-          <motion.div className="sheet-scrim center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div key="done" className="sheet-scrim center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div className="done-card" initial={{ scale: 0.9, y: 30, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}>
               <motion.span className="done-tick" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 400, damping: 15 }}>
                 <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
@@ -263,7 +263,7 @@ export default function Find() {
           </motion.div>
         )}
         {toast && (
-          <motion.div className="toast" initial={{ opacity: 0, y: 30, x: '-50%', scale: 0.9 }} animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }} exit={{ opacity: 0, y: 20, x: '-50%' }} transition={{ type: 'spring', stiffness: 400, damping: 28 }}>
+          <motion.div key="toast" className="toast" initial={{ opacity: 0, y: 30, x: '-50%', scale: 0.9 }} animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }} exit={{ opacity: 0, y: 20, x: '-50%' }} transition={{ type: 'spring', stiffness: 400, damping: 28 }}>
             <i style={{ background: toast.color }} />{toast.text}
           </motion.div>
         )}
