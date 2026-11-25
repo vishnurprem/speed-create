@@ -3,13 +3,14 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { AnimatePresence, motion } from 'motion/react'
 import CLIPS_JSON from './clips.json'
 
-export interface AppClip { id: number; title: string; dur: number; tags: string[]; station: string; handle: string; desc: string; creator: string; img: string; audio: string; vtt: string }
+export interface AppClip { id: number; title: string; dur: number; tags: string[]; station: string; handle: string; desc: string; creator: string; img: string; audio: string; vtt: string; once?: boolean }
 const ROOT = import.meta.env.BASE_URL
 export const APP_CLIPS = (CLIPS_JSON as AppClip[]).map((c) => ({ ...c, img: ROOT + c.img.replace(/^\//, ''), audio: ROOT + c.audio.replace(/^\//, '') }))
 
 /** The closing "ad" clip: AI voiceover (Adam, US) with captions timed from word timestamps. */
 export const YOUR_CLIP: AppClip = {
   id: 1,
+  once: true, // plays a single time, then rests on its last caption
   title: 'Your clip could be here',
   dur: 12.59,
   tags: ['#YourTopic', '#YourShow'],
@@ -103,28 +104,35 @@ export function useClipPlayer() {
   const [time, setTime] = useState(0)
   const [dur, setDur] = useState(0)
   const wantPlay = useRef(false)
+  const cur = useRef<AppClip | null>(null)
+  const [finished, setFinished] = useState<number[]>([])
   useEffect(() => {
     const a = new Audio(); a.preload = 'auto'; audio.current = a
     const onMeta = () => setDur(a.duration || 0)
     const onPlay = () => setPlaying(true), onPause = () => setPlaying(false)
-    const onEnd = () => { a.currentTime = 0; a.play().catch(() => {}) } // feed clip loops, like Home in the app
+    const onEnd = () => {
+      const c = cur.current
+      if (c?.once) { setFinished((f) => (f.includes(c.id) ? f : [...f, c.id])); return } // play once, then stop
+      a.currentTime = 0; a.play().catch(() => {}) // feed clips loop, like Home in the app
+    }
     a.addEventListener('loadedmetadata', onMeta); a.addEventListener('play', onPlay); a.addEventListener('pause', onPause); a.addEventListener('ended', onEnd)
     let raf = 0; const tick = () => { setTime(a.currentTime); raf = requestAnimationFrame(tick) }; raf = requestAnimationFrame(tick)
     return () => { cancelAnimationFrame(raf); a.pause(); a.src = '' }
   }, [])
   const load = useCallback((clip: AppClip, autoplay = wantPlay.current) => {
     const a = audio.current; if (!a) return
-    if (id !== clip.id) { a.src = clip.audio; a.currentTime = 0; setId(clip.id); setTime(0); setDur(clip.dur) }
-    if (autoplay) a.play().catch(() => {})
-  }, [id])
+    if (id !== clip.id) { a.src = clip.audio; a.currentTime = 0; setId(clip.id); setTime(0); setDur(clip.dur); cur.current = clip }
+    if (autoplay && !(clip.once && finished.includes(clip.id))) a.play().catch(() => {})
+  }, [id, finished])
   const toggle = useCallback((clip: AppClip) => {
     const a = audio.current; if (!a) return
+    if (clip.once && finished.includes(clip.id)) return
     if (id !== clip.id) { wantPlay.current = true; load(clip, true); return }
     if (a.paused) { wantPlay.current = true; a.play().catch(() => {}) } else { wantPlay.current = false; a.pause() }
-  }, [id, load])
+  }, [id, load, finished])
   const seek = useCallback((t: number) => { const a = audio.current; if (a && isFinite(t)) { a.currentTime = t; setTime(t) } }, [])
   const pause = useCallback(() => { audio.current?.pause() }, [])
-  return { id, playing, time, dur, load, toggle, seek, pause }
+  return { id, playing, time, dur, load, toggle, seek, pause, finished }
 }
 export type Player = ReturnType<typeof useClipPlayer>
 
@@ -133,13 +141,14 @@ const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).p
 /* ---------- feed card (Home content page) ---------- */
 export function FeedCard({ clip, active, player, onStation, onNext, extra }: { clip: AppClip; active: boolean; player: Player; onStation: () => void; onNext?: () => void; extra?: ReactNode }) {
   const isMe = player.id === clip.id
+  const done = !!clip.once && player.finished.includes(clip.id)
   const playing = isMe && player.playing
-  const t = isMe ? player.time : 0
+  const t = done ? clip.dur : isMe ? player.time : 0
   const d = (isMe && player.dur) || clip.dur
   const [liked, setLiked] = useState(false)
   const track = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
-  const seekFrom = (x: number) => { const r = track.current!.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (x - r.left) / r.width)); if (!isMe) player.load(clip, false); player.seek(p * d) }
+  const seekFrom = (x: number) => { if (done) return; const r = track.current!.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (x - r.left) / r.width)); if (!isMe) player.load(clip, false); player.seek(p * d) }
   return (
     <div className="fc">
       <div className="fc-card">
@@ -152,7 +161,7 @@ export function FeedCard({ clip, active, player, onStation, onNext, extra }: { c
             <div className={`fc-ind${playing ? '' : ' paused'}`}>{playing && <img src={BASE + 'media/audio-indicator.gif'} alt="" />}</div>
             {active || isMe ? <LyricCaptions vtt={clip.vtt} time={t} /> : <div className="cap-win" style={{ height: 150 }} />}
             <AnimatePresence>
-              {!playing && (
+              {!playing && !done && (
                 <motion.span className="fc-play" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.3 }} transition={{ type: 'spring', stiffness: 380, damping: 24 }}>
                   <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" fill="#111" /></svg>
                   {t === 0 && <em>Tap to listen</em>}
