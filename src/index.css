@@ -612,3 +612,24 @@ h1, h2, h3, p { margin: 0; }
 .ct-done h3 { margin: 6px 0 0; font-size: 26px; font-weight: 800; color: #fff; }
 .ct-done p { margin: 0; }
 .ct-row { display: flex; gap: 16px; align-items: center; margin-top: 10px; }
+
+/* upload sheet: talk to someone */
+.tts { margin: 4px 0 14px; border-radius: 16px; border: 1px solid #262626; background: #0e0e0e; overflow: hidden; }
+.tts-head, .tts-done { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px; text-align: left; }
+.tts-head:hover { background: #141414; }
+.tts-ic { width: 36px; height: 36px; border-radius: 50%; background: rgba(234,28,37,.14); color: #ff6b70; display: flex; align-items: center; justify-content: center; flex: none; font-weight: 800; }
+.tts-ic.ok { background: rgba(29,185,84,.16); color: #3ee07a; }
+.tts-t { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.tts-t b { font-size: 15px; color: #fff; }
+.tts-t small { font-size: 13px; color: #9a9a9a; line-height: 1.4; }
+.tts-go { color: #ea1c25; font-size: 18px; }
+.tts-form { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.tts-top { display: flex; justify-content: space-between; align-items: center; }
+.tts-top b { color: #fff; font-size: 16px; }
+.tts-seg { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: #161616; }
+.tts-seg button { height: 36px; border-radius: 9px; font-size: 14px; font-weight: 700; color: #a8a8a8; }
+.tts-seg button.on { background: #fff; color: #111; }
+.tts-form label { display: flex; flex-direction: column; gap: 6px; }
+.tts-form label span { font-size: 13px; font-weight: 600; color: #ddd; }
+.tts-form input { height: 46px; border-radius: 12px; background: #141414; border: 1.5px solid #2a2a2a; color: #fff; font: inherit; font-size: 15px; padding: 0 14px; outline: none; }
+.tts-form input:focus { border-color: #fff; }

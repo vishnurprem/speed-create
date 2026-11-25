@@ -23,8 +23,8 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       const b = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {}
-      if (!b.email || !b.message) return res.status(400).json({ error: 'missing email or message' })
-      const row = { id: clean(b.id, 20) || 'MSG-' + Date.now(), createdAt: new Date().toISOString(), name: clean(b.name, 120), email: clean(b.email, 120).toLowerCase(), message: clean(b.message, 4000) }
+      if ((!b.email && !b.phone) || !b.message) return res.status(400).json({ error: 'missing email or message' })
+      const row = { id: clean(b.id, 20) || 'MSG-' + Date.now(), createdAt: new Date().toISOString(), name: clean(b.name, 120), email: clean(b.email, 120).toLowerCase(), message: clean(b.message, 4000), phone: clean(b.phone, 40), topic: b.topic === 'callback' ? 'callback' : 'contact', prefer: b.prefer === 'call' ? 'call' : b.prefer === 'email' ? 'email' : undefined }
       await redis(['HSET', KEY, row.id, JSON.stringify(row)])
       return res.status(201).json({ ok: true })
     }

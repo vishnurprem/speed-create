@@ -34,7 +34,7 @@ export async function submitRequest(r: Omit<LicenseRequest, 'id' | 'createdAt' |
   return req
 }
 
-export interface ContactMessage { id: string; createdAt: string; name: string; email: string; message: string }
+export interface ContactMessage { id: string; createdAt: string; name: string; email: string; message: string; phone?: string; topic?: 'callback' | 'contact'; prefer?: 'call' | 'email' }
 const MSG_KEY = 'sr_messages'
 export const localMessages = () => read<ContactMessage[]>(MSG_KEY, [])
 export async function sendMessage(m: Omit<ContactMessage, 'id' | 'createdAt'>): Promise<ContactMessage> {

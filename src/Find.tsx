@@ -1,3 +1,4 @@
+import TalkToSomeone from './TalkToSomeone'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { CLIPS, type Clip, type ClipStatus } from './data'
@@ -223,6 +224,7 @@ export default function Find() {
                   </motion.div>
                 ))}
               </AnimatePresence>
+              <TalkToSomeone account={account} role={ROLES.find(([k]) => k === role)?.[1] ?? role} clipCount={counts.licensed + counts.removing} />
               <label className="up-agree"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> I own or represent these clips and agree to the Creator terms.</label>
               <button className="btn btn-red" disabled={!files.length || !agree} style={{ width: '100%', opacity: files.length && agree ? 1 : 0.45 }} onClick={startSubmit}>
                 Submit {counts.licensed + counts.removing} decision{counts.licensed + counts.removing === 1 ? '' : 's'}

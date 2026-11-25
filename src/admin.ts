@@ -126,12 +126,13 @@ function render() {
   renderSide()
   const list = $('list'), stats = $('stats'), filters = $('filters')
   if (view === 'messages') {
-    $('title').textContent = 'Messages'; $('subtitle').textContent = 'From the Talk to us form.'
+    $('title').textContent = 'Messages'; $('subtitle').textContent = 'From the Talk to us form, and call-back requests from the upload step.'
     stats.innerHTML = ''; filters.innerHTML = ''
     list.innerHTML = msgs.length ? msgs.map((m) => `<article class="adm-card">
         <div class="adm-card-head"><span class="adm-av">${esc(initials(m.name))}</span>
-          <div class="adm-who"><b>${esc(m.name)}</b><a href="mailto:${esc(m.email)}">${esc(m.email)}</a><small>${esc(m.id)} · ${when(m.createdAt)}</small></div>
-          <a class="adm-btn sm ghost" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: your message to SpeedRadio')}">Reply</a></div>
+          <div class="adm-who"><b>${esc(m.name)}</b><a href="mailto:${esc(m.email)}">${esc(m.email)}</a><small>${esc(m.id)} · ${when(m.createdAt)}${m.phone ? ` · <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a>` : ''}</small></div>
+          ${m.topic === 'callback' ? `<span class="pill y">${m.prefer === 'email' ? 'Email back' : 'Call back'}</span>` : ''}
+          ${m.phone && m.prefer === 'call' ? `<a class="adm-btn sm yes" href="tel:${esc(m.phone)}">Call</a>` : ''}${m.email ? `<a class="adm-btn sm ghost" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: your message to SpeedRadio')}">Reply</a>` : ''}</div>
         <p class="adm-msg">${esc(m.message)}</p></article>`).join('') : '<p class="muted adm-empty">No messages yet.</p>'
     return
   }

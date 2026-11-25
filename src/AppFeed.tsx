@@ -12,15 +12,15 @@ export const YOUR_CLIP: AppClip = {
   id: 1,
   once: true, // plays a single time, then rests on its last caption
   title: 'Your clip could be here',
-  dur: 12.59,
+  dur: 15.96,
   tags: ['#YourTopic', '#YourShow'],
   station: 'Your Station',
   handle: 'yourstation',
   desc: 'License your clips and reach new listeners.',
   creator: 'you',
   img: ROOT + 'brand/logo-mark.png',
-  audio: ROOT + 'media/yourclip.mp3',
-  vtt: 'WEBVTT\n\n00:00:00,000 --> 00:00:00,940\nYour clip could be here.\n\n00:00:01,060 --> 00:00:02,080\nCredited to you,\n\n00:00:02,220 --> 00:00:03,140\nlinked to your show,\n\n00:00:03,300 --> 00:00:04,080\nand paying you.\n\n00:00:04,180 --> 00:00:06,500\nYou get $2 for every 1,000 listens,\n\n00:00:06,720 --> 00:00:08,360\npaid monthly from our creator fund.\n\n00:00:08,700 --> 00:00:11,220\nFind your content, license it, and get paid.\n\n00:00:11,360 --> 00:00:12,300\nIt\'s as simple as that.\n',
+  audio: ROOT + 'media/yourclip2.mp3',
+  vtt: 'WEBVTT\n\n00:00:00,000 --> 00:00:01,100\nYour clip could be here.\n\n00:00:01,200 --> 00:00:02,220\nCredited to you,\n\n00:00:02,420 --> 00:00:03,360\nlinked to your show,\n\n00:00:03,540 --> 00:00:04,440\nand paying you.\n\n00:00:04,540 --> 00:00:07,080\nYou get $2 for every 1,000 listens,\n\n00:00:07,300 --> 00:00:08,940\npaid monthly from our creator fund.\n\n00:00:09,080 --> 00:00:10,700\nAnd you get paid for every play\n\n00:00:10,700 --> 00:00:11,760\nyour clips have already had.\n\n00:00:12,000 --> 00:00:14,540\nFind your content, license it, and get paid.\n\n00:00:14,660 --> 00:00:15,600\nIt\'s as simple as that.\n',
 }
 
 /* ---------- captions: port of the app's CaptionLyricScroll ---------- */
