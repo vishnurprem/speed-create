@@ -3,6 +3,9 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { CLIPS, type Clip, type ClipStatus } from './data'
 import { CountUp, EASE, Magnetic, PlayIcon, Waveform } from './ui'
 import { Footer } from './Landing'
+import { useApp } from './App'
+import { GoogleSignIn } from './GoogleSignIn'
+import { getAccount, setAccount, submitRequest, type Account, type LicenseRequest } from './requests'
 
 const ROLES: [string, string, string][] = [
   ['me', "It's me", 'I\'m the voice in these clips'],
@@ -72,8 +75,22 @@ export default function Find() {
   const [role, setRole] = useState('me')
   const [agree, setAgree] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const { go } = useApp()
+  const [signIn, setSignIn] = useState(false)
+  const [submitted, setSubmitted] = useState<LicenseRequest | null>(null)
+  const [account, setAcc] = useState<Account | null>(getAccount)
+  const finalize = async (a: Account) => {
+    const roleLabel = ROLES.find(([k]) => k === role)?.[1] ?? role
+    const req = await submitRequest({
+      email: a.email, name: a.name, role: roleLabel,
+      clips: clips.filter((c) => c.status !== 'unclaimed').map((c) => ({ id: c.id, title: c.title, show: c.show, status: c.status as 'licensed' | 'removing' })),
+      files: files.map((f) => ({ name: f.name, size: f.size })),
+    })
+    setSubmitted(req); setDone(true)
+  }
+  const startSubmit = () => { setSheet(false); const a = getAccount(); if (a) finalize(a); else setSignIn(true) }
   const addFiles = (list: FileList) => setFiles((f) => [...f, ...Array.from(list)])
-  useEffect(() => { document.documentElement.style.overflow = sheet || done ? 'hidden' : ''; return () => { document.documentElement.style.overflow = '' } }, [sheet, done])
+  useEffect(() => { document.documentElement.style.overflow = sheet || done || signIn ? 'hidden' : ''; return () => { document.documentElement.style.overflow = '' } }, [sheet, done, signIn])
 
   const search = () => { setLoading(true); setTimeout(() => setLoading(false), 900) }
   useEffect(() => { search() }, [])
@@ -167,7 +184,7 @@ export default function Find() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5" /><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" /></svg>
               {files.length ? `Documents · ${files.length}` : 'Upload documents'}
             </button>
-            <motion.button className="btn btn-red btn-sm" whileTap={{ scale: 0.96 }} disabled={!decided} style={{ opacity: decided ? 1 : 0.45 }} onClick={() => (files.length ? setDone(true) : setSheet(true))}>
+            <motion.button className="btn btn-red btn-sm" whileTap={{ scale: 0.96 }} disabled={!decided} style={{ opacity: decided ? 1 : 0.45 }} onClick={() => (files.length && agree ? startSubmit() : setSheet(true))}>
               Submit
             </motion.button>
           </div>
@@ -207,9 +224,21 @@ export default function Find() {
                 ))}
               </AnimatePresence>
               <label className="up-agree"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> I own or represent these clips and agree to the Creator terms.</label>
-              <button className="btn btn-red" disabled={!files.length || !agree} style={{ width: '100%', opacity: files.length && agree ? 1 : 0.45 }} onClick={() => { setSheet(false); setDone(true) }}>
+              <button className="btn btn-red" disabled={!files.length || !agree} style={{ width: '100%', opacity: files.length && agree ? 1 : 0.45 }} onClick={startSubmit}>
                 Submit {counts.licensed + counts.removing} decision{counts.licensed + counts.removing === 1 ? '' : 's'}
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+        {signIn && (
+          <motion.div className="sheet-scrim center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div initial={{ scale: 0.94, y: 24, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 24 }}>
+              <GoogleSignIn
+                title="Sign in to submit"
+                sub="So you can track this request and come back to license more clips."
+                onClose={() => setSignIn(false)}
+                onDone={(a) => { setAccount(a); setAcc(a); setSignIn(false); finalize(a) }}
+              />
             </motion.div>
           </motion.div>
         )}
@@ -220,14 +249,14 @@ export default function Find() {
                 <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
               </motion.span>
               <h3>Submitted</h3>
-              <p className="muted">We'll check your documents within 1–2 working days.</p>
+              <p className="muted">Request <b style={{ color: '#fff' }}>{submitted?.id}</b>{account ? <> · signed in as {account.email}</> : null}. We'll check your documents within 1–2 working days.</p>
               <div className="done-rows">
                 <div><b>{counts.licensed}</b><span>clips licensed · paid $2 per 1,000 listens</span></div>
                 <div><b>{counts.removing}</b><span>coming down within 24 hours</span></div>
                 <div><b>{files.length}</b><span>document{files.length === 1 ? '' : 's'} uploaded</span></div>
               </div>
-              <button className="btn btn-white" style={{ width: '100%' }} onClick={() => setDone(false)}>Add payout details</button>
-              <button className="undo" style={{ alignSelf: 'center' }} onClick={() => setDone(false)}>Back to my clips</button>
+              <button className="btn btn-white" style={{ width: '100%' }} onClick={() => { setDone(false); go('track') }}>Track my request</button>
+              <button className="undo" style={{ alignSelf: 'center' }} onClick={() => setDone(false)}>License more clips</button>
             </motion.div>
           </motion.div>
         )}

@@ -1,11 +1,26 @@
 import { BASE } from './ui'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import CLIPS_JSON from './clips.json'
 
 export interface AppClip { id: number; title: string; dur: number; tags: string[]; station: string; handle: string; desc: string; creator: string; img: string; audio: string; vtt: string }
 const ROOT = import.meta.env.BASE_URL
 export const APP_CLIPS = (CLIPS_JSON as AppClip[]).map((c) => ({ ...c, img: ROOT + c.img.replace(/^\//, ''), audio: ROOT + c.audio.replace(/^\//, '') }))
+
+/** The closing "ad" clip: AI voiceover (Adam, US) with captions timed from word timestamps. */
+export const YOUR_CLIP: AppClip = {
+  id: 1,
+  title: 'Your clip could be here',
+  dur: 12.59,
+  tags: ['#YourTopic', '#YourShow'],
+  station: 'Your Station',
+  handle: 'yourstation',
+  desc: 'License your clips and reach new listeners.',
+  creator: 'you',
+  img: ROOT + 'brand/logo-mark.png',
+  audio: ROOT + 'media/yourclip.mp3',
+  vtt: 'WEBVTT\n\n00:00:00,000 --> 00:00:00,940\nYour clip could be here.\n\n00:00:01,060 --> 00:00:02,080\nCredited to you,\n\n00:00:02,220 --> 00:00:03,140\nlinked to your show,\n\n00:00:03,300 --> 00:00:04,080\nand paying you.\n\n00:00:04,180 --> 00:00:06,500\nYou get $2 for every 1,000 listens,\n\n00:00:06,720 --> 00:00:08,360\npaid monthly from our creator fund.\n\n00:00:08,700 --> 00:00:11,220\nFind your content, license it, and get paid.\n\n00:00:11,360 --> 00:00:12,300\nIt\'s as simple as that.\n',
+}
 
 /* ---------- captions: port of the app's CaptionLyricScroll ---------- */
 interface Cue { start: number; end: number; text: string }
@@ -116,7 +131,7 @@ export type Player = ReturnType<typeof useClipPlayer>
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 
 /* ---------- feed card (Home content page) ---------- */
-export function FeedCard({ clip, active, player, onStation, onNext }: { clip: AppClip; active: boolean; player: Player; onStation: () => void; onNext?: () => void }) {
+export function FeedCard({ clip, active, player, onStation, onNext, extra }: { clip: AppClip; active: boolean; player: Player; onStation: () => void; onNext?: () => void; extra?: ReactNode }) {
   const isMe = player.id === clip.id
   const playing = isMe && player.playing
   const t = isMe ? player.time : 0
@@ -174,6 +189,7 @@ export function FeedCard({ clip, active, player, onStation, onNext }: { clip: Ap
           <span className="fc-time">{fmt(t)}</span>
           <span className="fc-speed">1x</span>
         </div>
+        {extra}
         <button className="fc-station" onClick={onStation}>
           <div className="fc-st-txt"><b>{clip.station}</b><span>{clip.desc}</span></div>
           <span className="fc-st-img"><img src={clip.img} alt="" /><em>+</em></span>

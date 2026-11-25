@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll
 import { useApp } from './App'
 import { BASE, EASE, Magnetic } from './ui'
 import { Faq, Final, Footer, HowItWorks, Statement } from './Landing'
-import { APP_CLIPS, FeedCard, StationProfile, useClipPlayer, type AppClip } from './AppFeed'
+import { APP_CLIPS, FeedCard, StationProfile, YOUR_CLIP, useClipPlayer, type AppClip } from './AppFeed'
 
 function useIsMobile(q = '(max-width: 900px)') {
   const [m, setM] = useState(() => window.matchMedia(q).matches)
@@ -60,23 +60,13 @@ function Pitch({ compact }: { compact?: boolean }) {
   )
 }
 
-function YouCard({ showCta = true }: { showCta?: boolean }) {
+function YourClipExtra({ showCta }: { showCta: boolean }) {
   const { go } = useApp()
   return (
-    <div className="fc">
-      <div className="fc-card fc-you">
-        <div className="fc-tex" />
-        <div className="fc-title">Your clip could be here</div>
-        <div className="fc-tags">#YourTopic  #YourShow</div>
-        <div className="you-lines">
-          <span style={{ color: '#505050', fontSize: 15 }}>credited to you,</span>
-          <span style={{ color: '#666', fontSize: 15 }}>linked to your show,</span>
-          <b>and paying you.</b>
-        </div>
-        <div className="you-rate"><strong>$2</strong><span>for every 1,000 listens<br />Paid monthly from our creator fund</span></div>
-        {showCta && <motion.button className="btn btn-red" style={{ width: '100%', height: 52 }} whileTap={{ scale: 0.97 }} onClick={() => go('find')}>License my content →</motion.button>}
-      </div>
-    </div>
+    <>
+      <div className="you-rate"><strong>$2</strong><span>for every 1,000 listens<br />Paid monthly from our creator fund</span></div>
+      {showCta && <motion.button className="btn btn-red" style={{ width: '100%', height: 48, marginBottom: 4 }} whileTap={{ scale: 0.97 }} onClick={() => go('find')}>License my content →</motion.button>}
+    </>
   )
 }
 
@@ -91,7 +81,8 @@ function Deck() {
   const [idx, setIdx] = useState(0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => setIdx(Math.min(N - 1, Math.max(0, Math.floor(v * N * 0.9999)))))
   const clipIdx = mobile ? idx - 1 : idx
-  const activeClip: AppClip | undefined = APP_CLIPS[clipIdx]
+  const FEED_ALL = [...APP_CLIPS, YOUR_CLIP]
+  const activeClip: AppClip | undefined = FEED_ALL[clipIdx]
   const [station, setStation] = useState<AppClip | null>(null)
   const [menu, setMenu] = useState(false)
   // mouse-driven depth for the desktop hero
@@ -115,6 +106,7 @@ function Deck() {
     ['How it works', () => jump('#how')],
     ['Questions', () => jump('#faq')],
     ['Find your content', () => { setMenu(false); go('find') }],
+    ['Track my request', () => { setMenu(false); go('track') }],
     ['Talk to us', () => { setMenu(false); window.location.href = 'mailto:company@speedradio.com' }],
   ]
 
@@ -170,7 +162,7 @@ function Deck() {
                     <FeedCard clip={c} active={clipIdx === k} player={player} onStation={() => setStation(c)} onNext={next} />
                   </div>
                 ))}
-                <div className="b-slide b-slide-feed"><YouCard showCta={!mobile} /></div>
+                <div className="b-slide b-slide-feed"><FeedCard clip={YOUR_CLIP} active={clipIdx === APP_CLIPS.length} player={player} onStation={() => go('find')} extra={<YourClipExtra showCta={!mobile} />} /></div>
               </motion.div>
               <AnimatePresence>
                 {station && <StationProfile key={station.id} clip={station} player={player} onBack={() => setStation(null)} />}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="brand/logo-mark.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#000000" />
+    <title>SpeedRadio · Licensing requests (admin)</title>
+  </head>
+  <body class="adm">
+    <header class="adm-head">
+      <span class="adm-logo"><img src="brand/logo-mark.png" alt="" />SpeedRadio</span>
+      <span class="adm-tag">Admin · Licensing requests</span>
+      <span class="adm-sp"></span>
+      <button id="refresh" class="adm-btn ghost" hidden>Refresh</button>
+      <button id="logout" class="adm-btn ghost" hidden>Sign out</button>
+    </header>
+    <main class="adm-wrap">
+      <section id="login" class="adm-login">
+        <h1>Licensing requests</h1>
+        <p>Enter the admin key set as <code>ADMIN_KEY</code> on Vercel.</p>
+        <form id="loginForm">
+          <input id="key" type="password" placeholder="Admin key" autocomplete="current-password" />
+          <button class="adm-btn">Open</button>
+        </form>
+        <button id="localBtn" class="adm-link" type="button">Or view requests saved in this browser</button>
+      </section>
+      <section id="board" hidden>
+        <div id="banner" class="adm-banner" hidden></div>
+        <div class="adm-stats" id="stats"></div>
+        <div class="adm-filters" id="filters"></div>
+        <div id="list" class="adm-list"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/admin.ts"></script>
+  </body>
+</html>

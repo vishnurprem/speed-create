@@ -100,13 +100,16 @@ export function Nav() {
           <button onClick={() => scrollTo('#how')}>How it works</button>
           <button onClick={() => scrollTo('#rate')}>What you get</button>
         </div>
-        {route !== 'find' ? (
-          <Magnetic className="btn btn-red btn-sm" onClick={() => go('find')} strength={0.2}>
-            Find your content <span className="arrow">→</span>
-          </Magnetic>
-        ) : (
-          <button className="btn btn-ghost btn-sm" onClick={() => go('home')}>← Back</button>
-        )}
+        <div className="nav-right">
+          {route !== 'track' && <button className="nav-track" onClick={() => go('track')}><span className="nt-l">Track request</span><span className="nt-s">Track</span></button>}
+          {route === 'home' ? (
+            <Magnetic className="btn btn-red btn-sm" onClick={() => go('find')} strength={0.2}>
+              Find your content <span className="arrow">→</span>
+            </Magnetic>
+          ) : (
+            <button className="btn btn-ghost btn-sm" onClick={() => go('home')}>← Back</button>
+          )}
+        </div>
       </motion.nav>
     </div>
   )

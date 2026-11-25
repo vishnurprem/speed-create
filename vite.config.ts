@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      input: { index: 'index.html', a: 'a.html', b: 'b.html' },
+      input: { index: 'index.html', a: 'a.html', b: 'b.html', admin: 'admin.html' },
     },
   },
 })
