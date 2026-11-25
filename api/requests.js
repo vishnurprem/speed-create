@@ -2,7 +2,7 @@
 //
 // Storage: Upstash Redis (Vercel → Storage → add "Upstash for Redis" to this project).
 // Vercel then sets KV_REST_API_URL and KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_URL / _TOKEN).
-// Admin access: set ADMIN_KEY (any passphrase) in Vercel → Settings → Environment Variables.
+// Admin access: username + password from /admin (prototype default admin / PWD123; set ADMIN_USER / ADMIN_PASSWORD on Vercel to change).
 //
 //   POST   /api/requests                 save a request (from the site)
 //   GET    /api/requests?email=x         a creator's own requests (used by "Track request")
@@ -11,7 +11,7 @@
 
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
-const ADMIN_KEY = process.env.ADMIN_KEY
+const ADMIN_KEY = `${process.env.ADMIN_USER || 'admin'}:${process.env.ADMIN_PASSWORD || 'PWD123'}` // prototype login; override with ADMIN_USER / ADMIN_PASSWORD
 const KEY = 'sr:requests'
 const STATUSES = ['In review', 'Approved', 'Needs info', 'Rejected']
 

@@ -22,7 +22,7 @@ async function load() {
   if (mode === 'local') { rows = localRows(); msgs = localMsgs(); banner('Showing requests saved <b>in this browser</b> only. Connect the database on Vercel to see everyone\'s.'); return render() }
   try {
     const r = await fetch('/api/requests', { headers: { 'x-admin-key': key } })
-    if (r.status === 401) { sessionStorage.removeItem('sr_admin_key'); key = ''; showLogin('That admin key didn\'t work.'); return }
+    if (r.status === 401) { sessionStorage.removeItem('sr_admin_key'); key = ''; showLogin('Wrong username or password.'); return }
     if (!r.ok) throw new Error(r.status === 503 ? 'storage' : String(r.status))
     rows = await r.json()
     try { const m = await fetch('/api/contact', { headers: { 'x-admin-key': key } }); msgs = m.ok ? await m.json() : [] } catch { msgs = [] }
@@ -78,11 +78,18 @@ function render() {
       <p class="adm-msg">${esc(m.message)}</p></article>`).join('') : '<p class="muted adm-empty">No messages yet.</p>'
 }
 
-function showLogin(err = '') { $('login').hidden = false; $('board').hidden = true; $('refresh').hidden = true; $('logout').hidden = true; if (err) $('key').setAttribute('placeholder', err) }
+function showLogin(err = '') { $('login').hidden = false; $('board').hidden = true; $('refresh').hidden = true; $('logout').hidden = true; const e = $('loginErr'); e.textContent = err; e.hidden = !err }
 function showBoard() { $('login').hidden = true; $('board').hidden = false; $('refresh').hidden = false; $('logout').hidden = false; load() }
 
-$('loginForm').addEventListener('submit', (e) => { e.preventDefault(); key = ($('key') as HTMLInputElement).value.trim(); if (!key) return; sessionStorage.setItem('sr_admin_key', key); mode = 'api'; showBoard() })
-$('localBtn').addEventListener('click', () => { mode = 'local'; showBoard() })
+// Prototype login. The API checks the same pair (ADMIN_USER / ADMIN_PASSWORD on Vercel, default admin / PWD123).
+const PROTO_USER = 'admin', PROTO_PASS = 'PWD123'
+$('loginForm').addEventListener('submit', (e) => {
+  e.preventDefault()
+  const u = ($('user') as HTMLInputElement).value.trim(), p = ($('pass') as HTMLInputElement).value
+  if (!u || !p) return showLogin('Enter your username and password.')
+  if (u !== PROTO_USER || p !== PROTO_PASS) return showLogin('Wrong username or password.')
+  key = `${u}:${p}`; sessionStorage.setItem('sr_admin_key', key); mode = 'api'; showBoard()
+})
 $('refresh').addEventListener('click', load)
 $('logout').addEventListener('click', () => { sessionStorage.removeItem('sr_admin_key'); key = ''; showLogin() })
 $('filters').addEventListener('click', (e) => { const f = (e.target as HTMLElement).dataset.f; if (f) { filter = f as typeof filter; render() } })

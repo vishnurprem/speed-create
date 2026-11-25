@@ -15,7 +15,7 @@ Built with Vite, React, Motion (`motion/react`) and Lenis.
 ## Vercel setup (one time)
 
 1. **Database for /admin:** Vercel project → Storage → add **Upstash for Redis** (free) to this project. It sets `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
-2. **Admin key:** Settings → Environment Variables → add `ADMIN_KEY` (any passphrase). You type it on `/admin`.
+2. **Admin login:** `/admin` uses username `admin` / password `PWD123` (prototype). To change it, add `ADMIN_USER` and `ADMIN_PASSWORD` under Settings → Environment Variables (and update `src/admin.ts`).
 3. **Real Google sign-in (optional):** create an OAuth Client ID (Web) in Google Cloud, add your Vercel domain as an authorised JavaScript origin, then add `VITE_GOOGLE_CLIENT_ID`. Until then sign-in is a labelled prototype (no password field).
 4. Redeploy.
 

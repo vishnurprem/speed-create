@@ -19,12 +19,14 @@
     <main class="adm-wrap">
       <section id="login" class="adm-login">
         <h1>Licensing requests</h1>
-        <p>Enter the admin key set as <code>ADMIN_KEY</code> on Vercel.</p>
-        <form id="loginForm">
-          <input id="key" type="password" placeholder="Admin key" autocomplete="current-password" />
-          <button class="adm-btn">Open</button>
+        <p>Sign in to review licensing requests and messages.</p>
+        <form id="loginForm" class="adm-form">
+          <label><span>Username</span><input id="user" autocomplete="username" /></label>
+          <label><span>Password</span><input id="pass" type="password" autocomplete="current-password" /></label>
+          <p id="loginErr" class="adm-err" hidden></p>
+          <button class="adm-btn">Sign in</button>
         </form>
-        <button id="localBtn" class="adm-link" type="button">Or view requests saved in this browser</button>
+        <small class="muted">Prototype login: admin / PWD123</small>
       </section>
       <section id="board" hidden>
         <div id="banner" class="adm-banner" hidden></div>

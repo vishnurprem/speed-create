@@ -1,12 +1,12 @@
 // Vercel serverless function: "Talk to us" messages for the /admin page.
-// Uses the same Upstash Redis + ADMIN_KEY setup as /api/requests.
+// Uses the same Upstash Redis + admin login as /api/requests.
 //
 //   POST /api/contact                 save a message (from the site)
 //   GET  /api/contact  + x-admin-key  every message (admin page)
 
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
-const ADMIN_KEY = process.env.ADMIN_KEY
+const ADMIN_KEY = `${process.env.ADMIN_USER || 'admin'}:${process.env.ADMIN_PASSWORD || 'PWD123'}` // prototype login; override with ADMIN_USER / ADMIN_PASSWORD
 const KEY = 'sr:messages'
 
 async function redis(cmd) {
