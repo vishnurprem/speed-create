@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'motion/react'
 import { useApp } from './App'
-import { BASE, EASE, Magnetic } from './ui'
+import { BASE, EASE, Magnetic, MobileMenu } from './ui'
 import { Faq, Final, Footer, HowItWorks, Statement } from './Landing'
 import { APP_CLIPS, FeedCard, StationProfile, YOUR_CLIP, useClipPlayer, type AppClip } from './AppFeed'
 
@@ -93,7 +93,6 @@ function Deck() {
   const comicX = useTransform(sx, [-0.5, 0.5], [18, -18]), comicY = useTransform(sy, [-0.5, 0.5], [14, -14])
   // the visible feed card owns the audio; if you paused, nothing starts by itself
   useEffect(() => { if (activeClip && !station) player.load(activeClip) ; else if (!activeClip && !station) player.pause() }, [activeClip?.id]) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { document.documentElement.style.overflow = menu ? 'hidden' : ''; return () => { document.documentElement.style.overflow = '' } }, [menu])
 
   const next = () => {
     const el = ref.current; if (!el) return
@@ -101,14 +100,6 @@ function Deck() {
     const per = (el.offsetHeight - window.innerHeight) / Math.max(1, N - 1)
     scrollTo(top + per * Math.min(N - 1, idx + 1) + 2)
   }
-  const jump = (sel: string) => { setMenu(false); setTimeout(() => scrollTo(sel), 250) }
-  const links: [string, () => void][] = [
-    ['How it works', () => jump('#how')],
-    ['Questions', () => jump('#faq')],
-    ['Find your content', () => { setMenu(false); go('find') }],
-    ['Track my request', () => { setMenu(false); go('track') }],
-    ['Talk to us', () => { setMenu(false); window.location.href = 'mailto:company@speedradio.com' }],
-  ]
 
   return (
     <section className="b-deck" ref={ref} style={{ height: `${N * 100}svh` }}>
@@ -162,7 +153,7 @@ function Deck() {
                     <FeedCard clip={c} active={clipIdx === k} player={player} onStation={() => setStation(c)} onNext={next} />
                   </div>
                 ))}
-                <div className="b-slide b-slide-feed"><FeedCard clip={YOUR_CLIP} active={clipIdx === APP_CLIPS.length} player={player} onStation={() => go('find')} extra={<YourClipExtra showCta={!mobile} />} /></div>
+                <div className="b-slide b-slide-feed"><FeedCard clip={YOUR_CLIP} active={clipIdx === APP_CLIPS.length} player={player} onStation={() => go('find')} extra={<YourClipExtra showCta={!mobile} />} onNext={mobile ? () => scrollTo('.statement') : undefined} nextLabel="Swipe up to know more" /></div>
               </motion.div>
               <AnimatePresence>
                 {station && <StationProfile key={station.id} clip={station} player={player} onBack={() => setStation(null)} />}
@@ -173,27 +164,7 @@ function Deck() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {mobile && menu && (
-          <motion.div className="b-menu" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-            <div className="b-head">
-              <div className="b-brand"><img src={BASE + 'brand/logo-mark.png'} alt="" /><b>SpeedRadio</b><i /><span>For creators</span></div>
-              <button className="b-burger open" onClick={() => setMenu(false)} aria-label="Close menu"><i /><i /><i /></button>
-            </div>
-            <nav className="b-menu-links">
-              {links.map(([label, fn], k) => (
-                <motion.button key={label} onClick={fn} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.05 + k * 0.05 }}>
-                  {label}<span>→</span>
-                </motion.button>
-              ))}
-            </nav>
-            <motion.div className="b-menu-foot" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-              <button className="btn btn-red" onClick={() => { setMenu(false); go('find') }}>License my content</button>
-              <span>$2 for every 1,000 listens · Paid from our creator fund</span>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {mobile && <MobileMenu open={menu} onClose={() => setMenu(false)} />}
       {mobile && (
         <div className="b-cta">
           <button className="btn btn-red" onClick={() => go('find')}>License my content</button>

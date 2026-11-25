@@ -40,4 +40,8 @@ code { background: #1a1a1a; padding: 1px 6px; border-radius: 6px; font-size: .9e
 .adm-cols p { margin: 0 0 4px; font-size: 14px; color: #ebebeb; }
 .adm-note { display: flex; gap: 8px; }
 .adm-empty { padding: 30px 0; }
+.adm-h2 { margin: 36px 0 12px; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+.adm-msg { margin: 0; font-size: 15px; line-height: 1.55; color: #ebebeb; white-space: pre-wrap; }
+.adm-reply { display: inline-flex; align-items: center; text-decoration: none; color: #fff; }
+.adm-top a.muted { text-decoration: none; }
 @media (max-width: 760px) { .adm-stats, .adm-cols { grid-template-columns: 1fr 1fr; } .adm-note { flex-direction: column; } }

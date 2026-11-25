@@ -583,3 +583,32 @@ h1, h2, h3, p { margin: 0; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
+
+/* shared menu: burgers only below desktop */
+.nav-burger { display: none; }
+.nav-links button.on { color: #fff; }
+@media (min-width: 901px) { .fc-menu { display: none !important; } }
+@media (max-width: 960px) {
+  .nav-burger { display: flex; }
+  .nav { gap: 12px; }
+}
+@media (max-width: 420px) { .nav .tag-chip { display: none; } .nav-right .btn { padding: 0 14px; font-size: 13px; } }
+
+/* contact */
+.contact { min-height: 100vh; padding: 140px 0 90px; }
+.ct-wrap { position: relative; z-index: 2; width: min(560px, calc(100% - 32px)); margin: 0 auto; text-align: center; }
+.ct-wrap h1 { margin: 0; font-size: clamp(40px, 6vw, 64px); font-weight: 900; letter-spacing: -0.04em; color: #fff; line-height: 1; }
+.ct-sub { margin: 18px auto 34px; max-width: 460px; font-size: 17px; line-height: 1.55; color: #a8a8a8; }
+.ct-card { text-align: left; padding: 28px; border-radius: 22px; background: rgba(12,12,12,.82); border: 1px solid #222; backdrop-filter: blur(14px); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.ct-form { display: flex; flex-direction: column; gap: 18px; }
+.ct-form label { display: flex; flex-direction: column; gap: 8px; }
+.ct-form label span { font-size: 14px; font-weight: 600; color: #ebebeb; }
+.ct-form input, .ct-form textarea { width: 100%; border-radius: 12px; background: #141414; border: 1.5px solid #2a2a2a; color: #fff; font: inherit; font-size: 15px; padding: 13px 14px; outline: none; transition: border-color .2s; }
+.ct-form textarea { resize: vertical; min-height: 140px; }
+.ct-form input:focus, .ct-form textarea:focus { border-color: #fff; }
+.ct-send { margin-top: 4px; height: 52px; border-radius: 12px; background: #fff; color: #111; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ct-send:disabled { cursor: not-allowed; }
+.ct-done { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 12px 0; }
+.ct-done h3 { margin: 6px 0 0; font-size: 26px; font-weight: 800; color: #fff; }
+.ct-done p { margin: 0; }
+.ct-row { display: flex; gap: 16px; align-items: center; margin-top: 10px; }

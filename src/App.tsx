@@ -5,10 +5,11 @@ import Landing from './Landing'
 import Find from './Find'
 import OptionB from './OptionB'
 import Track from './Track'
+import Contact from './Contact'
 import { Nav } from './ui'
 
 export type Variant = 'a' | 'b'
-export type Route = 'home' | 'find' | 'track'
+export type Route = 'home' | 'find' | 'track' | 'contact'
 interface Ctx { go: (r: Route) => void; scrollTo: (target: string | number) => void; route: Route; variant: Variant }
 const AppCtx = createContext<Ctx>({ go: () => {}, scrollTo: () => {}, route: 'home', variant: 'a' })
 export const useApp = () => useContext(AppCtx)
@@ -17,6 +18,7 @@ const readRoute = (): Route => {
   const h = window.location.hash
   if (h.startsWith('#/find')) return 'find'
   if (h.startsWith('#/track')) return 'track'
+  if (h.startsWith('#/contact')) return 'contact'
   return 'home'
 }
 
@@ -66,7 +68,7 @@ export default function App({ variant }: { variant: Variant }) {
           exit={{ opacity: 0, y: -16, filter: 'blur(6px)' }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          {route === 'find' ? <Find /> : route === 'track' ? <Track /> : variant === 'b' ? <OptionB /> : <Landing />}
+          {route === 'find' ? <Find /> : route === 'track' ? <Track /> : route === 'contact' ? <Contact /> : variant === 'b' ? <OptionB /> : <Landing />}
         </motion.main>
       </AnimatePresence>
     </AppCtx.Provider>

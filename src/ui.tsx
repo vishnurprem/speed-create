@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { animate, motion, useInView, useMotionValue, useMotionValueEvent, useScroll, useSpring } from 'motion/react'
+import { animate, AnimatePresence, motion, useInView, useMotionValue, useMotionValueEvent, useScroll, useSpring } from 'motion/react'
 import { useApp } from './App'
 
 export const BASE = import.meta.env.BASE_URL
@@ -78,12 +78,55 @@ export function CountUp({ to, prefix = '', decimals = 0, duration = 1.4 }: { to:
   return <span ref={ref}>{text}</span>
 }
 
+/** The one menu used everywhere: desktop nav and the mobile hamburger. */
+export function useMenuItems(): [string, () => void][] {
+  const { go, scrollTo } = useApp()
+  return [
+    ['How it works', () => scrollTo('#how')],
+    ['FAQ', () => scrollTo('#faq')],
+    ['Track request', () => go('track')],
+    ['Find your content', () => go('find')],
+    ['Talk to us', () => go('contact')],
+  ]
+}
+
+export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const items = useMenuItems()
+  const { go } = useApp()
+  useEffect(() => { document.documentElement.style.overflow = open ? 'hidden' : ''; return () => { document.documentElement.style.overflow = '' } }, [open])
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div className="b-menu" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+          <div className="b-head">
+            <div className="b-brand"><img src={BASE + 'brand/logo-mark.png'} alt="" /><b>SpeedRadio</b><i /><span>For creators</span></div>
+            <button className="b-burger open" onClick={onClose} aria-label="Close menu"><i /><i /><i /></button>
+          </div>
+          <nav className="b-menu-links">
+            {items.map(([label, fn], k) => (
+              <motion.button key={label} onClick={() => { onClose(); setTimeout(fn, 260) }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.05 + k * 0.05 }}>
+                {label}<span>→</span>
+              </motion.button>
+            ))}
+          </nav>
+          <motion.div className="b-menu-foot" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+            <button className="btn btn-red" onClick={() => { onClose(); go('find') }}>License my content</button>
+            <span>$2 for every 1,000 listens · Paid from our creator fund</span>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export function Nav() {
-  const { go, scrollTo, route } = useApp()
+  const { go, route } = useApp()
+  const items = useMenuItems()
   const { scrollY } = useScroll()
   const [compact, setCompact] = useState(false)
+  const [menu, setMenu] = useState(false)
   useMotionValueEvent(scrollY, 'change', (v) => setCompact(v > 40))
-  return (
+  return (<>
     <div className="nav-shell">
       <motion.nav
         className="nav"
@@ -97,20 +140,20 @@ export function Nav() {
           <span className="tag-chip">For creators</span>
         </button>
         <div className="nav-links">
-          <button onClick={() => scrollTo('#how')}>How it works</button>
-          <button onClick={() => scrollTo('#rate')}>What you get</button>
+          {items.filter(([l]) => l !== 'Find your content').map(([label, fn]) => (
+            <button key={label} className={(label === 'Track request' && route === 'track') || (label === 'Talk to us' && route === 'contact') ? 'on' : ''} onClick={fn}>{label}</button>
+          ))}
         </div>
         <div className="nav-right">
-          {route !== 'track' && <button className="nav-track" onClick={() => go('track')}><span className="nt-l">Track request</span><span className="nt-s">Track</span></button>}
-          {route === 'home' ? (
+          {route !== 'find' && (
             <Magnetic className="btn btn-red btn-sm" onClick={() => go('find')} strength={0.2}>
               Find your content <span className="arrow">→</span>
             </Magnetic>
-          ) : (
-            <button className="btn btn-ghost btn-sm" onClick={() => go('home')}>← Back</button>
           )}
+          <button className="b-burger nav-burger" onClick={() => setMenu(true)} aria-label="Open menu"><i /><i /><i /></button>
         </div>
       </motion.nav>
     </div>
-  )
+    <MobileMenu open={menu} onClose={() => setMenu(false)} />
+  </>)
 }

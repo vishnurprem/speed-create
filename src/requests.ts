@@ -34,6 +34,16 @@ export async function submitRequest(r: Omit<LicenseRequest, 'id' | 'createdAt' |
   return req
 }
 
+export interface ContactMessage { id: string; createdAt: string; name: string; email: string; message: string }
+const MSG_KEY = 'sr_messages'
+export const localMessages = () => read<ContactMessage[]>(MSG_KEY, [])
+export async function sendMessage(m: Omit<ContactMessage, 'id' | 'createdAt'>): Promise<ContactMessage> {
+  const msg: ContactMessage = { ...m, id: 'MSG-' + Math.random().toString(36).slice(2, 7).toUpperCase(), createdAt: new Date().toISOString() }
+  write(MSG_KEY, [msg, ...localMessages()])
+  try { await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(msg) }) } catch { /* offline / not deployed */ }
+  return msg
+}
+
 /** The creator's requests: local copies, with status updates from the server when it's available. */
 export async function myRequests(email: string): Promise<LicenseRequest[]> {
   const local = localRequests().filter((r) => r.email.toLowerCase() === email.toLowerCase())

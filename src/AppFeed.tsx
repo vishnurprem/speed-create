@@ -139,7 +139,7 @@ export type Player = ReturnType<typeof useClipPlayer>
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 
 /* ---------- feed card (Home content page) ---------- */
-export function FeedCard({ clip, active, player, onStation, onNext, extra }: { clip: AppClip; active: boolean; player: Player; onStation: () => void; onNext?: () => void; extra?: ReactNode }) {
+export function FeedCard({ clip, active, player, onStation, onNext, nextLabel = 'Swipe up for next', extra }: { clip: AppClip; active: boolean; player: Player; onStation: () => void; onNext?: () => void; nextLabel?: string; extra?: ReactNode }) {
   const isMe = player.id === clip.id
   const done = !!clip.once && player.finished.includes(clip.id)
   const playing = isMe && player.playing
@@ -205,10 +205,10 @@ export function FeedCard({ clip, active, player, onStation, onNext, extra }: { c
         </button>
       </div>
       {onNext && (
-        <button className="fc-next" onClick={onNext} aria-label="Next clip">
+        <button className="fc-next" onClick={onNext} aria-label={nextLabel}>
           <motion.svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EA1C25" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
             animate={{ y: [0, -4, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}><path d="M6 15l6-6 6 6" /></motion.svg>
-          Swipe up for next
+          {nextLabel}
         </button>
       )}
     </div>

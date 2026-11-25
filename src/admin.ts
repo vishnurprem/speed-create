@@ -1,11 +1,12 @@
 import '@fontsource-variable/inter'
 import './admin.css'
-import type { LicenseRequest, RequestStatus } from './requests'
+import type { ContactMessage, LicenseRequest, RequestStatus } from './requests'
 
 const STATUSES: RequestStatus[] = ['In review', 'Approved', 'Needs info', 'Rejected']
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 let key = sessionStorage.getItem('sr_admin_key') || ''
 let rows: LicenseRequest[] = []
+let msgs: ContactMessage[] = []
 let mode: 'api' | 'local' = 'api'
 let filter: 'All' | RequestStatus = 'All'
 
@@ -15,16 +16,19 @@ const when = (iso: string) => new Date(iso).toLocaleString(undefined, { day: 'nu
 function banner(msg: string) { const b = $('banner'); b.innerHTML = msg; b.hidden = !msg }
 
 function localRows(): LicenseRequest[] { try { return JSON.parse(localStorage.getItem('sr_requests') || '[]') } catch { return [] } }
+function localMsgs(): ContactMessage[] { try { return JSON.parse(localStorage.getItem('sr_messages') || '[]') } catch { return [] } }
 
 async function load() {
-  if (mode === 'local') { rows = localRows(); banner('Showing requests saved <b>in this browser</b> only. Connect the database on Vercel to see everyone\'s.'); return render() }
+  if (mode === 'local') { rows = localRows(); msgs = localMsgs(); banner('Showing requests saved <b>in this browser</b> only. Connect the database on Vercel to see everyone\'s.'); return render() }
   try {
     const r = await fetch('/api/requests', { headers: { 'x-admin-key': key } })
     if (r.status === 401) { sessionStorage.removeItem('sr_admin_key'); key = ''; showLogin('That admin key didn\'t work.'); return }
     if (!r.ok) throw new Error(r.status === 503 ? 'storage' : String(r.status))
-    rows = await r.json(); banner(''); render()
+    rows = await r.json()
+    try { const m = await fetch('/api/contact', { headers: { 'x-admin-key': key } }); msgs = m.ok ? await m.json() : [] } catch { msgs = [] }
+    banner(''); render()
   } catch (e) {
-    mode = 'local'; rows = localRows()
+    mode = 'local'; rows = localRows(); msgs = localMsgs()
     banner(String(e).includes('storage')
       ? 'The database isn\'t connected yet. On Vercel: <b>Storage → Upstash for Redis</b>, then redeploy. Showing requests saved in this browser for now.'
       : 'Couldn\'t reach <code>/api/requests</code> (it only runs on Vercel). Showing requests saved in this browser.')
@@ -68,6 +72,10 @@ function render() {
       <div class="adm-note"><input data-note placeholder="Note to the creator (shown when status is Needs info)" value="${esc(r.note || '')}" /><button data-save class="adm-btn ghost">Save note</button></div>
     </article>`
   }).join('') : '<p class="muted adm-empty">No requests here yet.</p>'
+  $('msgs').innerHTML = msgs.length ? msgs.map((m) => `<article class="adm-card">
+      <div class="adm-top"><div><b>${esc(m.name)}</b> <a class="muted" href="mailto:${esc(m.email)}">${esc(m.email)}</a><small>${esc(m.id)} · ${when(m.createdAt)}</small></div>
+      <a class="adm-btn ghost adm-reply" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: your message to SpeedRadio')}">Reply</a></div>
+      <p class="adm-msg">${esc(m.message)}</p></article>`).join('') : '<p class="muted adm-empty">No messages yet.</p>'
 }
 
 function showLogin(err = '') { $('login').hidden = false; $('board').hidden = true; $('refresh').hidden = true; $('logout').hidden = true; if (err) $('key').setAttribute('placeholder', err) }
