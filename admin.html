@@ -6,37 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#000000" />
-    <title>SpeedRadio · Licensing requests (admin)</title>
+    <title>SpeedRadio · Creator admin</title>
   </head>
   <body class="adm">
-    <header class="adm-head">
-      <span class="adm-logo"><img src="brand/logo-mark.png" alt="" />SpeedRadio</span>
-      <span class="adm-tag">Admin · Licensing requests</span>
-      <span class="adm-sp"></span>
-      <button id="refresh" class="adm-btn ghost" hidden>Refresh</button>
-      <button id="logout" class="adm-btn ghost" hidden>Sign out</button>
-    </header>
-    <main class="adm-wrap">
-      <section id="login" class="adm-login">
-        <h1>Licensing requests</h1>
-        <p>Sign in to review licensing requests and messages.</p>
-        <form id="loginForm" class="adm-form">
-          <label><span>Username</span><input id="user" autocomplete="username" /></label>
-          <label><span>Password</span><input id="pass" type="password" autocomplete="current-password" /></label>
-          <p id="loginErr" class="adm-err" hidden></p>
-          <button class="adm-btn">Sign in</button>
-        </form>
-        <small class="muted">Prototype login: admin / PWD123</small>
-      </section>
-      <section id="board" hidden>
+    <section id="login" class="adm-login">
+      <span class="adm-logo"><img src="brand/logo-mark.png" alt="" />SpeedRadio <em>Admin</em></span>
+      <h1>Creator admin</h1>
+      <p>Sign in to review licensing requests, removals and messages.</p>
+      <form id="loginForm" class="adm-form">
+        <label><span>Username</span><input id="user" autocomplete="username" /></label>
+        <label><span>Password</span><input id="pass" type="password" autocomplete="current-password" /></label>
+        <p id="loginErr" class="adm-err" hidden></p>
+        <button class="adm-btn">Sign in</button>
+      </form>
+      <small class="muted">Prototype login: admin / PWD123</small>
+    </section>
+
+    <div id="app" class="adm-app" hidden>
+      <aside class="adm-side">
+        <span class="adm-logo"><img src="brand/logo-mark.png" alt="" />SpeedRadio <em>Admin</em></span>
+        <nav id="side" class="adm-nav">
+          <button data-view="license"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg><span><i class="full">License requests</i><i class="short">Licenses</i></span><b data-count="license"></b></button>
+          <button data-view="remove"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg><span>Removals</span><b data-count="remove"></b></button>
+          <button data-view="messages"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg><span>Messages</span><b data-count="messages"></b></button>
+        </nav>
+        <div class="adm-side-foot">
+          <button id="refresh" class="adm-btn ghost sm">Refresh</button>
+          <button id="logout" class="adm-link">Sign out</button>
+        </div>
+      </aside>
+      <main class="adm-main">
         <div id="banner" class="adm-banner" hidden></div>
+        <header class="adm-title"><div><h1 id="title"></h1><p id="subtitle" class="muted"></p></div></header>
         <div class="adm-stats" id="stats"></div>
         <div class="adm-filters" id="filters"></div>
         <div id="list" class="adm-list"></div>
-        <h2 class="adm-h2">Talk to us messages</h2>
-        <div id="msgs" class="adm-list"></div>
-      </section>
-    </main>
+      </main>
+    </div>
+    <div id="toast" class="adm-toast" hidden></div>
     <script type="module" src="/src/admin.ts"></script>
   </body>
 </html>

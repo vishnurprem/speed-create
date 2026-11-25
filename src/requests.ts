@@ -1,9 +1,9 @@
 // Licensing requests: saved in this browser (so the creator can track them) and sent to /api/requests
 // (a Vercel function that stores them for the /admin page). If the API isn't reachable the local copy still works.
 
-export type RequestStatus = 'In review' | 'Approved' | 'Needs info' | 'Rejected'
+export type RequestStatus = 'In review' | 'Approved' | 'Partly approved' | 'Needs info' | 'Rejected'
 export interface Account { email: string; name: string; picture?: string; via: 'google' | 'prototype' }
-export interface ClipDecision { id: string; title: string; show: string; status: 'licensed' | 'removing' }
+export interface ClipDecision { id: string; title: string; show: string; status: 'licensed' | 'removing'; review?: 'approved' | 'declined' | null }
 export interface LicenseRequest {
   id: string
   createdAt: string

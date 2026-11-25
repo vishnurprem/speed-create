@@ -7,13 +7,14 @@
 //   POST   /api/requests                 save a request (from the site)
 //   GET    /api/requests?email=x         a creator's own requests (used by "Track request")
 //   GET    /api/requests   + x-admin-key  every request (admin page)
-//   PATCH  /api/requests   + x-admin-key  { id, status, note }  update status
+//   PATCH  /api/requests   + x-admin-key  { id, status?, note?, clips?: [{ id, review }] }  review clips / update status
 
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
 const ADMIN_KEY = `${process.env.ADMIN_USER || 'admin'}:${process.env.ADMIN_PASSWORD || 'PWD123'}` // prototype login; override with ADMIN_USER / ADMIN_PASSWORD
 const KEY = 'sr:requests'
-const STATUSES = ['In review', 'Approved', 'Needs info', 'Rejected']
+const STATUSES = ['In review', 'Approved', 'Partly approved', 'Needs info', 'Rejected']
+const REVIEWS = ['approved', 'declined']
 
 async function redis(cmd) {
   const r = await fetch(URL_, { method: 'POST', headers: { Authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' }, body: JSON.stringify(cmd) })
@@ -65,7 +66,11 @@ export default async function handler(req, res) {
       if (!cur) return res.status(404).json({ error: 'not found' })
       const row = JSON.parse(cur)
       if (STATUSES.includes(b.status)) row.status = b.status
-      if (typeof b.note === 'string') row.note = clean(b.note, 500)
+      if (typeof b.note === 'string') row.note = clean(b.note, 1000)
+      if (Array.isArray(b.clips)) {
+        const rv = new Map(b.clips.map((c) => [String(c.id), REVIEWS.includes(c.review) ? c.review : null]))
+        row.clips = row.clips.map((c) => (rv.has(c.id) ? { ...c, review: rv.get(c.id) } : c))
+      }
       await redis(['HSET', KEY, row.id, JSON.stringify(row)])
       return res.status(200).json(row)
     }

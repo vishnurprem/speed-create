@@ -7,8 +7,10 @@ import { EASE } from './ui'
 import { Footer } from './Landing'
 
 const STEPS = ['Submitted', 'In review', 'Approved', 'Earning']
-const stepIndex = (s: LicenseRequest['status']) => (s === 'Approved' ? 3 : s === 'Rejected' ? 0 : 1)
-const pill = (s: LicenseRequest['status']) => (s === 'Approved' ? 'chip-g' : s === 'Rejected' ? 'chip-r' : s === 'Needs info' ? 'chip-y' : 'chip-n')
+const stepIndex = (s: LicenseRequest['status']) => (s === 'Approved' || s === 'Partly approved' ? 3 : s === 'Rejected' ? 0 : 1)
+const clipLabel = (c: LicenseRequest['clips'][number]) =>
+  c.status === 'licensed' ? (c.review === 'approved' ? 'Licensed ✓' : c.review === 'declined' ? 'Not licensed' : 'Licensing') : (c.review === 'approved' ? 'Removed ✓' : c.review === 'declined' ? 'Kept' : 'Removing')
+const pill = (s: LicenseRequest['status']) => (s === 'Approved' || s === 'Partly approved' ? 'chip-g' : s === 'Rejected' ? 'chip-r' : s === 'Needs info' ? 'chip-y' : 'chip-n')
 
 function RequestCard({ r, k }: { r: LicenseRequest; k: number }) {
   const [open, setOpen] = useState(k === 0)
@@ -24,12 +26,12 @@ function RequestCard({ r, k }: { r: LicenseRequest; k: number }) {
       <div className="tr-steps">
         {STEPS.map((s, i) => (
           <div key={s} className={`tr-step${i <= at && r.status !== 'Rejected' ? ' on' : ''}`}>
-            <span className="tr-dot">{i < at || (i === at && r.status === 'Approved') ? '✓' : i + 1}</span>
+            <span className="tr-dot">{i < at || (i === at && (r.status === 'Approved' || r.status === 'Partly approved')) ? '✓' : i + 1}</span>
             <small>{s}</small>
           </div>
         ))}
       </div>
-      {r.status === 'Needs info' && r.note && <p className="tr-note">{r.note}</p>}
+      {r.note && <p className="tr-note">{r.note}</p>}
       <div className="tr-nums">
         <div><b>{lic}</b><span>licensed · $2 per 1,000 listens</span></div>
         <div><b>{rem}</b><span>coming down within 24h</span></div>
@@ -40,7 +42,7 @@ function RequestCard({ r, k }: { r: LicenseRequest; k: number }) {
         {open && (
           <motion.ul className="tr-clips" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
             {r.clips.map((c) => (
-              <li key={c.id}><span>{c.title}<small>{c.show}</small></span><span className={`chip ${c.status === 'licensed' ? 'chip-g' : 'chip-r'}`}>{c.status === 'licensed' ? 'Licensed' : 'Removing'}</span></li>
+              <li key={c.id}><span>{c.title}<small>{c.show}</small></span><span className={`chip ${c.review === 'declined' ? 'chip-n' : c.status === 'licensed' ? 'chip-g' : 'chip-r'}`}>{clipLabel(c)}</span></li>
             ))}
           </motion.ul>
         )}
